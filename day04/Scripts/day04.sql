@@ -94,104 +94,38 @@ VALUES(SEQ_REPLY.NEXTVAL, '수지는 첫사랑!', 5, 2);
 INSERT INTO TBL_REPLY
 VALUES(SEQ_REPLY.NEXTVAL, '서빙은 사랑을 타고~', 5, 3);
 
--- 서브 쿼리
+-- 서브쿼리
 SELECT * FROM TBL_USER;
 SELECT * FROM TBL_POST;
 SELECT * FROM TBL_REPLY;
 
+
 -- 서브쿼리
 -- 떡잎마을에 살고 있는 사용자가 작성한 게시글 조회
-SELECT ID
-FROM TBL_USER
-WHERE USER_ADDRESS LIKE '%떡잎%';
-
 SELECT *
 FROM TBL_POST
 WHERE USER_ID IN (
-	SELECT ID
-	FROM TBL_USER
-	WHERE USER_ADDRESS LIKE '%떡잎%'
+   SELECT ID
+   FROM TBL_USER
+   WHERE USER_ADDRESS LIKE '%떡잎%'
 );
 
--- 카피바라가 들어간 게시글을 작성한 사람의 이메일과 주소 조회
-SELECT USER_ID
-FROM TBL_POST
-WHERE POST_TITLE LIKE '%카피바라%' OR POST_CONTENT LIKE '%카피바라%';
-
+-- 카피바라가 들어간 게시글을 작성한 사람의 이름과 주소 조회
 SELECT USER_EMAIL "이메일 주소", USER_ADDRESS "주소"
 FROM TBL_USER
-WHERE ID IN(
-	SELECT USER_ID
-	FROM TBL_POST
-	WHERE POST_TITLE LIKE '%카피바라%' OR POST_CONTENT LIKE '%카피바라%'
+WHERE ID IN (
+   SELECT USER_ID
+   FROM TBL_POST
+   WHERE POST_TITLE LIKE '%카피바라%' OR POST_CONTENT LIKE '%카피바라%'
 );
 
--- 서울시에 살고 있는 사용자가 작성한 게시글에 달린 댓글의 총 개수
+-- 2번 게시글에 달린 댓글 총 개수
+-- 서울시에 살고 있는 사용자가 작성한 게시글에 달린 댓글의 총 개수 
 SELECT * FROM TBL_USER;
 
--- 서울시에 살고 있는 사용자
-SELECT *
-FROM TBL_USER
-WHERE USER_ADDRESS LIKE '서울시%';
-
-SELECT ID
-FROM TBL_USER
-WHERE USER_ADDRESS LIKE '서울시%';
-
--- 서울시에 살고 있는 사용자가 작성한 게시글
-SELECT *
-FROM TBL_POST
-WHERE USER_ID IN (
-	SELECT ID
-	FROM TBL_USER
-	WHERE USER_ADDRESS LIKE '서울시%'
-);
-
-SELECT ID
-FROM TBL_POST
-WHERE USER_ID IN (
-	SELECT ID
-	FROM TBL_USER
-	WHERE USER_ADDRESS LIKE '서울시%'
-);
-
--- -- 서울시에 살고 있는 사용자가 작성한 게시글에 달린 댓글
-SELECT *
+SELECT COUNT(ID) || '개' "댓글 개수"
 FROM TBL_REPLY
-WHERE POST_ID IN(
-	SELECT ID
-	FROM TBL_POST
-	WHERE USER_ID IN (
-		SELECT ID
-		FROM TBL_USER
-		WHERE USER_ADDRESS LIKE '서울시%'
-	)
-);
-
-SELECT ID
-FROM TBL_REPLY
-WHERE POST_ID IN(
-	SELECT ID
-	FROM TBL_POST
-	WHERE USER_ID IN (
-		SELECT ID
-		FROM TBL_USER
-		WHERE USER_ADDRESS LIKE '서울시%'
-	)
-);
-
-
-SELECT COUNT(ID) "댓글 총 개수"
-FROM TBL_REPLY
-WHERE POST_ID IN (
-    SELECT ID
-    FROM TBL_POST
-    WHERE USER_ID IN (
-        SELECT ID
-        FROM TBL_USER
-        WHERE USER_ADDRESS LIKE '서울시%'
-    )
-);
+WHERE POST_ID = 2;
 
 -- 서울에 살고 있는 사용자들이 작성한 게시글의 달린 댓글들
 SELECT COUNT(*) || '개' "서울시에 살고있는 사용자가 작성한 게시들의 달린 댓글 수"
@@ -286,64 +220,37 @@ WHERE ID IN (
 -- CASE문
 -- 값을 대체할 때 사용하는 문장
 -- SELECT 절에서 사용된다.
-SELECT
-	CASE USER_PASSWORD
-		WHEN '1234' THEN '일이삼사'
-		WHEN '4567' THEN '사오육칠'
-		ELSE '다른거'
-	END
+SELECT 
+   CASE USER_PASSWORD
+      WHEN '1234' THEN '일이삼사'
+      WHEN '4567' THEN '사오육칠'
+      ELSE '다른거'
+   END
 FROM TBL_USER;
 
--- 생일이 1990년도에 태어났다면 1990년으로 출력
+
+-- 생일이 1990년도에 태어났다면 1990년도로 출력
 -- 생일이 2000년도에 태어났다면 2000년도로 출력
 SELECT 
-	CASE
-		WHEN USER_BIRTH <= TO_DATE('2000-01-01', 'YYYY-MM-DD') THEN '20000년생'
-		WHEN USER_BIRTH <= TO_DATE('2000-01-01', 'YYYY-MM-DD') THEN '1990년생'
-	END
+   CASE
+      WHEN USER_BIRTH >= TO_DATE('2000-01-01', 'YYYY-MM-DD') THEN '2000년생'
+      WHEN USER_BIRTH <= TO_DATE('2000-01-01', 'YYYY-MM-DD') THEN '1990년생'
+   END
 FROM TBL_USER;
 
-SELECT USER_BIRTH
-FROM TBL_USER
-WHERE ID = 1;
 
 SELECT *
 FROM TBL_USER;
 
 -- CASE문
 -- 경기도에 살고 있는 사용자라면 경기도인
-SELECT 
-	CASE 
-		WHEN USER_ADDRESS LIKE '경기도%' THEN '경기도인'
-		WHEN USER_ADDRESS LIKE '서울%' THEN '서울인'
-	END
-FROM TBL_USER;
-
 -- 서울시에 살고 있는 사용자라면 서울인으로 출력
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT 
+   CASE 
+      WHEN USER_ADDRESS LIKE '%경기도%' THEN '경기도인'
+      WHEN USER_ADDRESS LIKE '%서울%' THEN '서울인'
+   END
+FROM TBL_USER;
 
 
 
